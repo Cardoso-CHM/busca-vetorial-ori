@@ -27,9 +27,9 @@ def gerar_indice_invertido(dir):
 
 def salvar_dicionario(dic, dir):
 
-  json = json.dumps(dic)
+  data = json.dumps(dic)
   f = open(dir,"w")
-  f.write(json)
+  f.write(data)
   f.close()
 
 def carregar_dicionario(dir):
