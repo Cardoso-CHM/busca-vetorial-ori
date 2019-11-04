@@ -71,8 +71,52 @@ def retirarStopWords(inn, stopwords):
     
     # palavras que não estão no arquivo de stopwords
     return np.setdiff1d(inn,intersecao)
+
+def removerGenero(not_stops, x):
+    
+    genero = []
+    
+    for p in not_stops:
+
+        if (p[len(p)-1] == 'a'):
+            print('\n'+ p + ' é uma palavra feminina?')
+            res = input('Resposta(s/n): ')
+            
+            while res!='s' and res!='n':
+                res = input('Resposta(s/n): ') 
+                
+            if (res == 's'):
+                
+                i,j = np.where(x == p)
+                i = int(i[0:1])
+                print (i)
+                
+                if (p[len(p)-2] != 'r'):
+                    p = p[0:len(p)-1] + 'o'
+                    
+                else:
+                    p = p[0:len(p)-1]
+                 
+                aux = x[i]
+                aux[0:1] = p
+                x[i] = aux
+                print (x[i])
+                    
+        genero.append(p)
+    return genero
  
-def menu():
+def menu1():
+    print('||||||||||||||||||||||||||||||||||')
+    print('||                              ||')
+    print('|| 1-Retirar StopWords          ||')
+    print('|| 0-Sair                       ||')
+    print('||||||||||||||||||||||||||||||||||')
+    print('||                              ||')
+    
+    op = int(input('|| Opcao:'))
+    return op
+
+def menu2():
     print('||||||||||||||||||||||||||||||||||')
     print('||                              ||')
     print('|| 1-Retirar StopWords          ||')
@@ -88,8 +132,17 @@ def menu():
     return op
 
 opcao = 10
+not_stops = []
+flag_Menu = 0
+
 while opcao != 0:
-    opcao = menu()
+    #Criando um sistema dinaminco de menu, obrigando o usuário primeiro tirar as stopwords para depois manipular as demais funções
+    if flag_Menu == 0 :
+        while opcao >1 :
+            opcao = menu1()
+        
+    else:
+        opcao = menu2()
     
     if opcao == 1:
         # le arquivo txt de entrada em uma matriz "x" sendo a primeira coluna as palavras, a segunda os documentos que ela ocorre e a terceira a frequência da ocorrência
@@ -107,7 +160,7 @@ while opcao != 0:
         #Realizando supervisão com o usuário para o mesmo decidir quais palavras são e não são stopwords
         #listas de stopwords e "não-stopwords"
         stops = []
-        not_stops = []
+        
         while cnt != tam:
             #Criando sublista de 10 em 10 palavras para agilizar o processo
             #Pode ser que o tamanho da lista nao seja divisivel por 10 e pra isso precisamos guardar a diferença entre o contador e o tamanho
@@ -152,13 +205,14 @@ while opcao != 0:
             else:
                 #Todas as palavras são stopwords
                 not_stops = not_stops + sub_lista
-     
+        flag_Menu = 1        
         mensagemSucesso()
     elif opcao == 2:
-        print("opcao 2")
+        not_stops =  removerGenero(not_stops, x)
+        mensagemSucesso()
     elif opcao == 3:
         print(gerar_indice_invertido("entrada-teste"))
-        print("opcao 3")
+        mensagemSucesso()
     elif opcao == 4:
         #zerando arquivo de saida
         zerarArquivo("Lista02")
