@@ -1,7 +1,7 @@
-### Tasks:
+### Tasks para Segunda-Feira (04/11/2019):
 
-- [ ] Colocar no git (César)
-- [ ] Testes (Rafael)
+- [x] Colocar no git (César)
+- [x] Testes (Rafael)
 - [x] Criar menu de opções (João)
 	- [x] Opção para gerar única lista final (João)
 - [x] Fazer itens "b" e "d" (Sala de aula)
