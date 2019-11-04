@@ -138,7 +138,8 @@ flag_Menu = 0
 while opcao != 0:
     #Criando um sistema dinaminco de menu, obrigando o usuário primeiro tirar as stopwords para depois manipular as demais funções
     if flag_Menu == 0 :
-        opcao = menu1()
+        while opcao >1 :
+            opcao = menu1()
         
     else:
         opcao = menu2()
