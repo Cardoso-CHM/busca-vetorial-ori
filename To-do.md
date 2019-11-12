@@ -1,6 +1,6 @@
 ### Tasks:
 
-- [ ] Colocar no git (César)
+- [x] Colocar no git (César)
 - [ ] Testes (Rafael)
 - [x] Criar menu de opções (João)
 	- [x] Opção para gerar única lista final (João)

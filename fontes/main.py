@@ -24,7 +24,8 @@ def escreverEmArquivo(diretorio,frase):
     f.close()
 
 def lerTXT(nomeArquivo):
-     return np.genfromtxt(nomeArquivo + ".txt",dtype='str'); 
+    nomeArquivo = './'+ nomeArquivo + '.txt'
+    return np.genfromtxt(nomeArquivo,dtype='str'); 
 
 def zerarArquivo(nomeArquivo):
      return open(nomeArquivo + ".txt","w").close()
