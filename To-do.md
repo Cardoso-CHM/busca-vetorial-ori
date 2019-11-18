@@ -7,7 +7,7 @@
 	- [x] TF.IDF de cadas posting (Cesar)
 	
 - [ ] busca vetorial (João e Rafael)	
-	- [ ] criar vetores de busca (João)
+	- [ ] criar vetores de busca(verificar se o termo existe) (idf e termos)(João) 
 	- [ ] normalizar todos vetores (João)
 	- [ ] calcular produtos cartesianos para cada vetor (Rafael)
 	- [ ] criar vetores de documentos e ranquear (Rafael)
