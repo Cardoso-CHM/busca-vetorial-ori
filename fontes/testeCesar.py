@@ -85,12 +85,15 @@ def gerar_IDF_TF_de_Dicionario_Invertido(dict_indice):
 
     
 url = "http://dontpad.com/ori_teste.txt"
-x = gerar_indice_invertido(url)
 
+x = gerar_indice_invertido(url)
+docs = { doc: int(doc.split('doc')[1]) for doc in x["#docs"] }
+        
 y = gerar_IDF_TF_de_Dicionario_Invertido(x)
 
-print(y)
+#pegando a coluna do "doc1"
+print(y[:,docs["doc1"]])
 
-#amor casa
-#amor 0 1
-#casa 0 1
+print("\n")
+#pegando a linha "amor"
+print( y[ list(x.keys()).index("amor") ] )
