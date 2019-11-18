@@ -93,9 +93,11 @@ def gerar_IDF_TF_de_Dicionario_Invertido(dict_indice):
         idf = np.array([idf])
         tf = np.array(tf)
         
-        return np.multiply(idf.T,tf)
+        #coluna 0 representa o idf dos termos de busca do usuário
+        #como ainda nao existe a string de busca a coluna somente terá zeros
+        return np.insert(np.multiply(idf.T,tf), 0, 0, axis=1)
     except Exception as e:
-        print(e)
+        print("Exeção na função gerar_IDF_TF: " + e)
 
  
 def mensagemSucesso():

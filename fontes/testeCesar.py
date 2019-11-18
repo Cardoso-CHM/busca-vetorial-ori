@@ -3,7 +3,6 @@ import numpy as np
 import json
 import math
 
-
 def gerar_indice_invertido(dir):
   
     df = pd.read_csv(dir, sep=" ", header=None)
@@ -78,12 +77,20 @@ def gerar_IDF_TF_de_Dicionario_Invertido(dict_indice):
         idf = np.array([idf])
         tf = np.array(tf)
         
-        return np.multiply(idf.T,tf)
+        #coluna 0 representa o idf dos termos de busca do usuário
+        #como ainda nao existe a string de busca a coluna somente terá zeros
+        return np.insert(np.multiply(idf.T,tf), 0, 0, axis=1)
     except Exception as e:
-        print(e)
+        print("Exeção na função gerar_IDF_TF: " + e)
 
     
 url = "http://dontpad.com/ori_teste.txt"
 x = gerar_indice_invertido(url)
 
-print(gerar_IDF_TF_de_Dicionario_Invertido(x))
+y = gerar_IDF_TF_de_Dicionario_Invertido(x)
+
+print(y)
+
+#amor casa
+#amor 0 1
+#casa 0 1
