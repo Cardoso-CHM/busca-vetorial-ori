@@ -99,7 +99,19 @@ def gerar_IDF_TF_de_Dicionario_Invertido(dict_indice):
     except Exception as e:
         print("Exeção na função gerar_IDF_TF: " + e)
 
- 
+def pesquisar_idf_tf_termo(idf_tf, indice_invertido, termo):
+  keys = list(indice_invertido.keys()) 
+  if(termo in keys):
+    return idf_tf[ keys.index(termo) ]
+  else:
+    return False;
+
+def pesquisar_idf_tf_doc(idf_tf, docs, doc):
+  if(doc in docs):
+    return idf_tf[:,docs[doc]]
+  else:
+    return False;
+
 def mensagemSucesso():
     print("\n\n--------------------------------------  Pronto!  --------------------------------------------")
     print('Processo executado com sucesso!')
@@ -145,6 +157,18 @@ def removerGenero(not_stops, x):
         genero.append(p)
     return genero
  
+    
+def menu():
+    print('|| Escolha uma opção |||||||||||||')
+    print('||                              ||')
+    print('|| 1-Retirar StopWords          ||')
+    print('|| 0-Sair                       ||')
+    print('||||||||||||||||||||||||||||||||||')
+    print('||                              ||')
+    
+    op = int(input('|| Opcao:'))
+    return op
+
 def menu1():
     print('||||||||||||||||||||||||||||||||||')
     print('||                              ||')
