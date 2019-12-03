@@ -139,9 +139,7 @@ def alterarGenero(not_stops, x):
                 
             if (res == 's'):
                 
-                i,j = np.where(x == p)
-                #i = int(i[0:1])
-                #print (i)
+                i,j = np.where(x == p) #guarda em 'i' os indices da palavra encontrada 
                 
                 if (p[len(p)-2] != 'r'):
                     p = p[0:len(p)-1] + 'o'
@@ -149,12 +147,10 @@ def alterarGenero(not_stops, x):
                 else:
                     p = p[0:len(p)-1]
                     
-                for indice in np.nditer(i):
-                    print(indice)
-                    aux = x[indice]
-                    aux[0:1] = p
-                    x[indice] = aux
-                    print(x[indice])
+                for indice in np.nditer(i): #percorre as posicoes em que encontrei a palavra
+                    aux = x[indice]#Ex: aux = [pequena, 1 ,2]
+                    aux[0:1] = p #atribuindo genero a palavra = [pequeno]
+                    x[indice] = aux #alteração da palavra realizada em x, mantendo os docs [pequeno, 1 ,2]
                     
         genero.append(p)
     return genero
