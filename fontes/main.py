@@ -124,7 +124,7 @@ def retirarStopWords(inn, stopwords):
     # palavras que não estão no arquivo de stopwords
     return np.setdiff1d(inn,intersecao)
 
-def removerGenero(not_stops, x):
+def alterarGenero(not_stops, x):
     
     genero = []
     
@@ -140,19 +140,21 @@ def removerGenero(not_stops, x):
             if (res == 's'):
                 
                 i,j = np.where(x == p)
-                i = int(i[0:1])
-                print (i)
+                #i = int(i[0:1])
+                #print (i)
                 
                 if (p[len(p)-2] != 'r'):
                     p = p[0:len(p)-1] + 'o'
                     
                 else:
                     p = p[0:len(p)-1]
-                 
-                aux = x[i]
-                aux[0:1] = p
-                x[i] = aux
-                print (x[i])
+                    
+                for indice in np.nditer(i):
+                    print(indice)
+                    aux = x[indice]
+                    aux[0:1] = p
+                    x[indice] = aux
+                    print(x[indice])
                     
         genero.append(p)
     return genero
@@ -272,7 +274,7 @@ while opcao != 0:
         flag_Menu = 1        
         mensagemSucesso()
     elif opcao == 2:
-        not_stops =  removerGenero(not_stops, x)
+        not_stops =  alterarGenero(not_stops, x)
         mensagemSucesso()
     elif opcao == 3:
         print(gerar_indice_invertido("entrada-teste"))
