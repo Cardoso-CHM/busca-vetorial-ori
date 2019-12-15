@@ -115,7 +115,7 @@ def pesquisar_idf_tf_doc(idf_tf, docs, doc):
 def mensagemSucesso():
     print("\n\n--------------------------------------  Pronto!  --------------------------------------------")
     print('Processo executado com sucesso!')
-    print("---------------------------------------------------------------------------------------------")
+    print("---------------------------------------------------------------------------------------------\n\n")
  
 def retirarStopWords(inn, stopwords):
     # fazendo a interseção das duas listas
@@ -155,30 +155,7 @@ def alterarGenero(not_stops, x):
         genero.append(p)
     return genero
  
-    
 def menu():
-    print('|| Escolha uma opção |||||||||||||')
-    print('||                              ||')
-    print('|| 1-Retirar StopWords          ||')
-    print('|| 0-Sair                       ||')
-    print('||||||||||||||||||||||||||||||||||')
-    print('||                              ||')
-    
-    op = int(input('|| Opcao:'))
-    return op
-
-def menu1():
-    print('||||||||||||||||||||||||||||||||||')
-    print('||                              ||')
-    print('|| 1-Retirar StopWords          ||')
-    print('|| 0-Sair                       ||')
-    print('||||||||||||||||||||||||||||||||||')
-    print('||                              ||')
-    
-    op = int(input('|| Opcao:'))
-    return op
-
-def menu2():
     print('||||||||||||||||||||||||||||||||||')
     print('||                              ||')
     print('|| 1-Retirar StopWords          ||')
@@ -187,24 +164,19 @@ def menu2():
     print('|| 4-Gerar Lista                ||')
     print('|| 5-Gerar Lista de StopWords   ||')
     print('|| 0-Sair                       ||')
+    print('||                              ||')
     print('||||||||||||||||||||||||||||||||||')
     print('||                              ||')
     
     op = int(input('|| Opcao:'))
     return op
 
-opcao = 10
+opcao = -1
 not_stops = []
-flag_Menu = 0
 
 while opcao != 0:
     #Criando um sistema dinaminco de menu, obrigando o usuário primeiro tirar as stopwords para depois manipular as demais funções
-    if flag_Menu == 0 :
-        while opcao >1 :
-            opcao = menu1()
-        
-    else:
-        opcao = menu2()
+    opcao = menu()
     
     if opcao == 1:
         # le arquivo txt de entrada em uma matriz "x" sendo a primeira coluna as palavras, a segunda os documentos que ela ocorre e a terceira a frequência da ocorrência
@@ -293,3 +265,8 @@ while opcao != 0:
         for p in stops:
             escreverEmArquivo("stopwords.txt",' \n' + p)
         mensagemSucesso()
+    
+    elif opcao != 0:
+        print("|| Opção inválida!\n")
+
+print("|| Programa finalizado!")
