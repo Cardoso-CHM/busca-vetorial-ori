@@ -138,8 +138,10 @@ def ranquear(r, qtd, qtd_docs):
     
     #criando matriz para receber valores dos documentos
     for k in range(qtd_docs):
-        docs.append(vetor_busca)
+        a = [0.0]*qtd
+        docs.append(a)
         
+    
     #calculo do valor de divisao do valor de busca
     for k in r:
         div += r[i][0]**2
@@ -152,66 +154,66 @@ def ranquear(r, qtd, qtd_docs):
         j += 1
         teste += 1
         
-    print ('Vetor de busca: ', vetor_busca)
-        
     #atribuindo valores aos documentos
     j=1
     
     contador = 1
     for it in range(qtd_docs):
-        
         div=0
         i=0
         for k in r:
             div += r[i][j]**2
             i += 1
         div = div**(0.5)
-        print('valor div (',contador,')', div)
         
         aux = 0
-        for d in range(qtd):
+        for d in range(qtd): #quantidade de termos
             if (div != 0):
-                docs[j-1][aux] = docs[j-1][aux]/div
-                fgf = docs[j-1][aux] 
-                print('valor doc: ', round(fgf,7))
+                docs[j-1][aux] = r[aux][j]/div
+
             else:
                 docs[j-1][aux] = 0.0
             aux += 1
         j += 1
-        print('')
         contador += 1
+               
+    cont2 = 0
+    for k in docs:
+        cont = 0
+        for t in k:
+            docs[cont2][cont] = t*vetor_busca[cont]
+            cont+=1
+        cont2 +=1
     
-    for d in docs:
-        print(d)
-        
-    print(r)
-        
-def teste():
+    ranking = []
     
+    for k in docs:
+        ranking.append(sum(k))
+    
+    dc =  np.zeros((qtd_docs,2))
         
-    #for i in range(qtd+1):
-        #print(r[0][j])
-        #j += 1
-        
+    cont = 0
+    cont2 = 0
+    with np.nditer(dc, op_flags=['readwrite']) as it:
+        for i in it:
+            if(cont%2 ==0):
+                i[...] = ranking[cont2]
+                cont2+=1
+            else:
+                i[...] = cont2
+            cont += 1
+              
+    rk = dc[dc[:,0].argsort()][::-1]
     print('')
-    print(r)    
-    print('---------------------')
-    return 'ok'
-
-def montar_vetor_busca(dict, lista, lista2,coluna):
-    keys=list(dict.keys()) #in python 3, you'll need `list(i.keys())`
-    numerador = []
-    denominador = 0
-    for termo in lista:
-        if(termo in keys):
-            numerador.append(lista2[keys.index(termo), coluna])
-            denominador = denominador + math.pow(lista2[keys.index(termo), 0],2)
-            print('numerador: ', numerador)
-            print('denominador: ', denominador)
-    for valor in numerador:
-        numerador[numerador.index(valor)] = float(numerador[numerador.index(valor)])/float(denominador)
-        #numerador.index(valor) = numerador[valor]/denominador
-    return numerador
+    print(rk)
+    print('')
+    
+    rk1 = rk[:,1]
+    
+    for v in rk1:
+        print('Documento: ', int(v))
+                        
+    return 0
             
 #MAIN
 url = "http://dontpad.com/ori_teste.txt"
@@ -232,15 +234,15 @@ y = gerar_IDF_TF_de_Dicionario_Invertido(x)
 #print("\n")
 #print("\n")
 qtd_docs = len(docs)
-#frase = input('Digite os termos que deseja pesquisar: ')
-#print(buscar_termos(frase,x, y, qtd_docs))
+frase = input('Digite os termos que deseja pesquisar: ')
+print(buscar_termos(frase,x, y, qtd_docs))
 #print(pesquisar_idf_tf_termo(y,x,"TERMO QUE NAO EXISTE"))
 #print(pesquisar_idf_tf_doc(y,docs,"DOC QUE NAO EXISTE"))
-lista = ['amor', 'acordo', 'doido']
-vetor_de_busca = montar_vetor_busca(x,lista,y,0)
+#lista = ['amor', 'acordo', 'doido']
+#vetor_de_busca = montar_vetor_busca(x,lista,y,0)
 
-j = []
-for i in range(qtd_docs):
-    j.append(montar_vetor_busca(x,lista,y,i+1))
+#j = []
+#for i in range(qtd_docs):
+#    j.append(montar_vetor_busca(x,lista,y,i+1))
     
-print(j)
+#print(j)
