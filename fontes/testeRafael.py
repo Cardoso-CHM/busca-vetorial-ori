@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import json
 import math
-from random import randint
 
 def gerar_indice_invertido(dir):
   
@@ -126,9 +125,9 @@ def buscar_termos(frase,x,y,qtd_docs):
     if(qtd_termos == 0):
         return ('Nenhum termo encontrado!')
     else:
-        return ranquear(idf_tf,qtd_termos,qtd_docs)
+        return ranquear(idf_tf,qtd_termos,qtd_docs,f,x,y)
     
-def ranquear(r, qtd, qtd_docs):
+def ranquear(r, qtd, qtd_docs,frase,x,y):
     i = 0
     j = 0
     div = 0
@@ -136,12 +135,12 @@ def ranquear(r, qtd, qtd_docs):
     vetor_busca = [0.0]*qtd
     docs = []
     
+    '''
     #criando matriz para receber valores dos documentos
     for k in range(qtd_docs):
-        a = [0.0]*qtd
-        docs.append(a)
+        docs.append(vetor_busca)
+    '''
         
-    
     #calculo do valor de divisao do valor de busca
     for k in r:
         div += r[i][0]**2
@@ -153,30 +152,9 @@ def ranquear(r, qtd, qtd_docs):
         vetor_busca[teste] = r[j][0]/div
         j += 1
         teste += 1
+          
+    docs = montar_vetores_distancia(x,frase,y,qtd_docs)
         
-    #atribuindo valores aos documentos
-    j=1
-    
-    contador = 1
-    for it in range(qtd_docs):
-        div=0
-        i=0
-        for k in r:
-            div += r[i][j]**2
-            i += 1
-        div = div**(0.5)
-        
-        aux = 0
-        for d in range(qtd): #quantidade de termos
-            if (div != 0):
-                docs[j-1][aux] = r[aux][j]/div
-
-            else:
-                docs[j-1][aux] = 0.0
-            aux += 1
-        j += 1
-        contador += 1
-               
     cont2 = 0
     for k in docs:
         cont = 0
@@ -203,18 +181,54 @@ def ranquear(r, qtd, qtd_docs):
                 i[...] = cont2
             cont += 1
               
-    rk = dc[dc[:,0].argsort()][::-1]
-    print('')
-    print(rk)
-    print('')
-    
+    rk = dc[dc[:,0].argsort()][::-1] 
     rk1 = rk[:,1]
     
     for v in rk1:
         print('Documento: ', int(v))
-                        
-    return 0
+        
+        
+def montar_vetor_busca(dict, lista, lista2):
+    keys=list(dict.keys()) #in python 3, you'll need `list(i.keys())`
+    numerador = []
+    denominador = 0
+    for termo in lista:
+        if(termo in keys):
+            numerador.append(lista2[keys.index(termo), 0])
+            denominador = denominador + math.pow(lista2[keys.index(termo), 0],2)
+    for valor in numerador:
+        denominador=math.sqrt(denominador)
+        numerador[numerador.index(valor)] = float(numerador[numerador.index(valor)])/float(denominador)
+        #numerador.index(valor) = numerador[valor]/denominador
+    return numerador
+
+def montar_vetores_distancia(dict, lista, lista2,qtd_docs):
+    
+    vd = []
+    for coluna, k in enumerate(range(qtd_docs)):
+        keys=list(dict.keys())
+        i=coluna+1
+        numerador = []
+        denominador = 0
+        while i< coluna+2 :
+            for termo in lista:
+                if(termo in keys) :
+                    numerador.append(lista2[keys.index(termo), coluna+1])
+                    denominador = denominador + math.pow(lista2[keys.index(termo), coluna+1],2)
+                    
+            denominador=math.sqrt(denominador)
+            for valor in numerador:
+                if(denominador ==0.0) :
+                    numerador[numerador.index(valor)] = 0;
+                else :
+                    numerador[numerador.index(valor)] = float(numerador[numerador.index(valor)])/float(denominador)
             
+            i+=1
+        
+        vd.append(numerador)
+    
+    return vd
+
 #MAIN
 url = "http://dontpad.com/ori_teste.txt"
 
@@ -226,23 +240,9 @@ docs = { doc: int(doc.split('doc')[1]) for doc in x["#docs"] }
         
 y = gerar_IDF_TF_de_Dicionario_Invertido(x)
 
-#print(pesquisar_idf_tf_termo(y,x,"voce"))
-#barbaridade = (pesquisar_idf_tf_termo(y,x,"voce"))
-#print("\n")
-#print(pesquisar_idf_tf_doc(y,docs,"doc1"))
-
-#print("\n")
-#print("\n")
 qtd_docs = len(docs)
 frase = input('Digite os termos que deseja pesquisar: ')
-print(buscar_termos(frase,x, y, qtd_docs))
-#print(pesquisar_idf_tf_termo(y,x,"TERMO QUE NAO EXISTE"))
-#print(pesquisar_idf_tf_doc(y,docs,"DOC QUE NAO EXISTE"))
-#lista = ['amor', 'acordo', 'doido']
-#vetor_de_busca = montar_vetor_busca(x,lista,y,0)
+print('')
+print('')
+buscar_termos(frase,x, y, qtd_docs)
 
-#j = []
-#for i in range(qtd_docs):
-#    j.append(montar_vetor_busca(x,lista,y,i+1))
-    
-#print(j)
