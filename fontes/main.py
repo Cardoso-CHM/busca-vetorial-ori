@@ -303,10 +303,9 @@ def menu():
     print('||                              ||')
     print('|| 1-Retirar StopWords          ||')
     print('|| 2-Retirar Genero             ||')
-    print('|| 3-Gerar arquivo de indice    ||')
-    print('|| 4-Gerar Lista                ||')
-    print('|| 5-Gerar Lista de StopWords   ||')
-    print('|| 6-Realizar Busca Vetorial    ||')
+    print('|| 3-Gerar Lista                ||')
+    print('|| 4-Gerar Lista de StopWords   ||')
+    print('|| 5-Realizar Busca Vetorial    ||')
     print('|| 0-Sair                       ||')
     print('||                              ||')
     print('||||||||||||||||||||||||||||||||||')
@@ -424,9 +423,6 @@ def main():
             matriz_idf_tf = gerar_IDF_TF_de_Dicionario_Invertido(dict_indice_invertido, docs)
             
             ranking = buscar_termos(frase, dict_indice_invertido,matriz_idf_tf, qtd_docs)
-            
-            for i in ranking:
-                
             
         elif opcao != 0:
             print("|| Opção inválida!\n")

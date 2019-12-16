@@ -292,6 +292,7 @@ print(x)
 print(y)
 
 vetor_de_busca = montar_vetor_busca(x,lista,y)
+print(vetor_de_busca)
 vetor_doc_1= montar_vetores_distancia(x,lista,y,1)
 vetor_doc_2= montar_vetores_distancia(x,lista,y,2)
 vetor_doc_3= montar_vetores_distancia(x,lista,y,3)
