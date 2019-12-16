@@ -291,10 +291,9 @@ def menu():
     print('||                              ||')
     print('|| 1-Retirar StopWords          ||')
     print('|| 2-Retirar Genero             ||')
-    print('|| 3-Gerar arquivo de indice    ||')
-    print('|| 4-Gerar Lista                ||')
-    print('|| 5-Gerar Lista de StopWords   ||')
-    print('|| 6-Realizar Busca Vetorial    ||')
+    print('|| 3-Gerar Lista                ||')
+    print('|| 4-Gerar Lista de StopWords   ||')
+    print('|| 5-Realizar Busca Vetorial    ||')
     print('|| 0-Sair                       ||')
     print('||                              ||')
     print('||||||||||||||||||||||||||||||||||')
@@ -382,10 +381,6 @@ while opcao != 0:
         mensagemSucesso()
         
     elif opcao == 3:
-        print(gerar_indice_invertido("entrada-teste"))
-        mensagemSucesso()
-        
-    elif opcao == 4:
         #zerando arquivo de saida
         zerarArquivo("Lista02")
         #Ordenando as palavras alfabeticamente
@@ -399,13 +394,13 @@ while opcao != 0:
                 escreverEmArquivo("Lista02.txt",t[0] + ' ' + t[1] + ' ' + t[2] + '\n')
         mensagemSucesso()
         
-    elif opcao == 5:
+    elif opcao == 4:
         #Escrevendo as stopwords e não-stopwords em seus respectivos arquivos
         for p in stops:
             escreverEmArquivo("stopwords.txt",' \n' + p)
         mensagemSucesso()
     
-    elif opcao == 6:
+    elif opcao == 5:
         frase = input('Digite os termos que deseja pesquisar: ')
         dict_indice_invertido = gerar_indice_invertido("./Lista02.txt")
         docs = { doc: int(doc.split('doc')[1]) for doc in dict_indice_invertido["#docs"] }
