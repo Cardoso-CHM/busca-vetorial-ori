@@ -254,16 +254,21 @@ def montar_vetores_distancia(dict, lista, lista2,coluna):
         
         """
 #MAIN
+        
+frase = input('Digite os termos que deseja pesquisar: ')
+x = gerar_indice_invertido("./Lista02.txt")        
+        
+        
 url = "http://dontpad.com/ori_teste.txt"
 
-x = gerar_indice_invertido(url)
+#x = gerar_indice_invertido(url)
 
 # DURANTE A GERAÇÃO DO INDICE, É COLOCADO UM ÍNDICE CHAMADO "#docs" PARA FACILITAR A OBTENÇÃO DE TODOS OS DOCS UTILIZADOS
 # DURANTE A EXECUÇAO DA FUNÇÃO "gerar_IDF_TF_de_Dicionario_Invertido", ESTE ÍNDICE "#docs" É RETIRADO DO DICIONÁRIO !
 docs = { doc: int(doc.split('doc')[1]) for doc in x["#docs"] }
         
 y = gerar_IDF_TF_de_Dicionario_Invertido(x)
-
+print(y)
 
 """
 print("1")
@@ -282,7 +287,9 @@ print("4")
 print(pesquisar_idf_tf_doc(y,docs,"DOC QUE NAO EXISTE"))
 """
 
-lista = ['amor', 'acordo', 'doido']
+lista = frase.split()
+print(x)
+print(y)
 
 vetor_de_busca = montar_vetor_busca(x,lista,y)
 vetor_doc_1= montar_vetores_distancia(x,lista,y,1)
