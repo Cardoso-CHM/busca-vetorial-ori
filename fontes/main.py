@@ -139,17 +139,18 @@ def gerar_IDF_TF_de_Dicionario_Invertido(dict_indice, _dict_docs):
         print("Exeção na função gerar_IDF_TF: " + e)
 
 def pesquisar_idf_tf_termo(idf_tf, indice_invertido, termo):
-  keys = list(indice_invertido.keys()) 
-  if(termo in keys):
-    return idf_tf[ keys.index(termo) ]
-  else:
-    return [];
+    keys = list(indice_invertido.keys()) 
+    aux = [s for s in keys if termo in s]
+    if(len(aux)>0):
+        return idf_tf[ keys.index(aux[0]) ]
+    else:
+        return [];
 
 def pesquisar_idf_tf_doc(idf_tf, docs, doc):
-  if(doc in docs):
-    return idf_tf[:,docs[doc]]
-  else:
-    return [];
+    if(doc in docs):
+        return idf_tf[:,docs[doc]]
+    else:
+        return [];
 
 def busca_vetorial(termos,x,y,qtd_docs):
     idf_tf = []
@@ -162,7 +163,7 @@ def busca_vetorial(termos,x,y,qtd_docs):
             idf_tf.append(k)
             
     if(qtd_termos == 0):
-        return ('Nenhum termo encontrado!')
+        return []
     else:
         return ranquear(idf_tf,qtd_termos,qtd_docs,termos,x,y)
 
@@ -221,7 +222,6 @@ def ranquear(r, qtd, qtd_docs,frase,x,y):
             cont += 1
               
     rk = dc[dc[:,0].argsort()][::-1]
-    
     rk = rk[rk[:,0] > 0]
     rk1 = rk[:,1]
     
@@ -308,17 +308,18 @@ def buscar_trecho_de_termo_no_doc(doc_conteudo,termo):
         deslocamento = [idx,idx]
         
         #verificando se pode pegar 5 palavras antes da posição do indice do termo
-        for i in range(5):
+        for i in reversed(range(4)):
             if(idx - i >=0):
                 deslocamento[0] = idx-i
                 break
             
         #verificando se pode pegar 5 palavras depois da posição do indice do termo
-        for i in reversed(range(5)):
+        for i in reversed(range(4)):
             if(idx + i <= len(palavras)):
                 deslocamento[1] = idx+i
                 break;
-            
+        
+        
         aux = "("
         for i in range(deslocamento[0], deslocamento[1]):
             aux += palavras[i] + " "
@@ -346,21 +347,22 @@ def menu():
     print('||||||||||||||||||||||||||||||||||')
     print('||                              ||')
     
-    op = int(input('|| Opcao:'))
+    op = str(input('|| Opcao:'))
     return op
 
 def main():
+    
     #MAIN - INICIO DA EXECUÇÃO DO PROGRAMA
     opcao = -1
     not_stops = []
     entrada = lerTXT("Lista01") # lendo arquivo de entrada
     stopwords = lerTXT('stopwords') # lendo arquivo contendo stopwords achadas na internet
     
-    while opcao != 0:
+    while opcao != "0":
         #Criando um sistema dinaminco de menu, obrigando o usuário primeiro tirar as stopwords para depois manipular as demais funções
         opcao = menu()
         
-        if opcao == 1:
+        if opcao == "1":
             # le arquivo txt de entrada em uma matriz "x" sendo a primeira coluna as palavras, a segunda os documentos que ela ocorre e a terceira a frequência da ocorrência
         
             # cria uma lista contendo a primeira coluna da matriz e retira as palavras repetidas
@@ -421,11 +423,11 @@ def main():
                     not_stops = not_stops + sub_lista   
             mensagemSucesso()
             
-        elif opcao == 2:
+        elif opcao == "2":
             not_stops =  alterarGenero(not_stops, entrada)
             mensagemSucesso()
             
-        elif opcao == 3:
+        elif opcao == "3":
             #zerando arquivo de saida
             zerarArquivo("Lista02")
             #Ordenando as palavras alfabeticamente
@@ -439,13 +441,13 @@ def main():
                     escreverEmArquivo("Lista02.txt",t[0] + ' ' + t[1] + ' ' + t[2] + '\n')
             mensagemSucesso()
             
-        elif opcao == 4:
+        elif opcao == "4":
             #Escrevendo as stopwords e não-stopwords em seus respectivos arquivos
             for p in stops:
                 escreverEmArquivo("stopwords.txt",' \n' + p)
             mensagemSucesso()
         
-        elif opcao == 5:
+        elif opcao == "5":
             frase = input('Digite os termos que deseja pesquisar: ')
             frase = frase.lower()
             termos = frase.split()
@@ -458,14 +460,21 @@ def main():
             
             ranking = busca_vetorial(termos, dict_indice_invertido,matriz_idf_tf, qtd_docs)
             
-            for i in ranking:
-                doc = "doc" + str(int(i))
-                for t in termos:
-                    preview_list = buscar_trecho_de_termo_no_doc(docs[doc][0],t)
-                    if(preview_list):
-                        print('"' , doc , '": ', preview_list)
-            
-        elif opcao != 0:
+            if(len(ranking) > 0):
+                print("\nResultado da busca vetorial: \n")
+                for i in ranking:
+                    doc = "doc" + str(int(i))
+                    for t in termos:
+                        preview_list = buscar_trecho_de_termo_no_doc(docs[doc][0],t)
+                        if(preview_list):
+                            print('|| "' + doc + '": ' , preview_list)
+                        else:
+                            print('|| "' + doc + '": Problema na stemização do termo')
+                print("\n")
+            else:
+                print("\nTermos não encontrados nos documentos!\n")
+                
+        elif opcao != "0":
             print("|| Opção inválida!\n")
     
     print("|| Programa finalizado!")
