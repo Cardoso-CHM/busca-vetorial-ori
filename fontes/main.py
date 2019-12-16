@@ -75,11 +75,12 @@ def gerar_IDF_TF_de_Dicionario_Invertido(dict_indice):
         
         #Na funcao gerarIndiceInvertido é colocado uma chave com o nome "#docs" contendo uma lista
         # com todos os documentos - para facilitar as operações a seguir
-        docs = dict_indice["#docs"]
+        docs = dict_indice_invertido["#docs"]
         qtde_total_docs = len(docs)
-        del dict_indice["#docs"] # retirando indice auxiliar para não causar problemas nas seguintes iteraçÕes:
+        del dict_indice_invertido["#docs"] # retirando indice auxiliar para não causar problemas nas seguintes iteraçÕes:
         
         for termo in dict_indice:
+            
             aux = []
             for doc in docs:
                 
@@ -87,15 +88,23 @@ def gerar_IDF_TF_de_Dicionario_Invertido(dict_indice):
                     aux.append(calcTF(dict_indice[termo]["docs"][doc]))
                 else:
                     aux.append(0)
+                    
             tf.append(aux)
-            idf.append(calcIDF(qtde_total_docs, len(dict_indice[termo]["docs"])))
+            idf.append(calcIDF(qtde_total_docs, len(dict_indice[termo]["docs"])) )
         
         idf = np.array([idf])
+        #print(len(idf))
+        #print(type(idf))
+        retornando_idf = idf.transpose()
         tf = np.array(tf)
+        #print(len(tf))
+        #print(type(tf))
         
         #coluna 0 representa o idf dos termos de busca do usuário
         #como ainda nao existe a string de busca a coluna somente terá zeros
-        return np.insert(np.multiply(idf.T,tf), 0, 0, axis=1)
+        m = np.insert(np.multiply(idf.T,tf), 0, 0, axis=1)
+        m[0:,0:1] = retornando_idf
+        return m
     except Exception as e:
         print("Exeção na função gerar_IDF_TF: " + e)
 
@@ -115,9 +124,9 @@ def pesquisar_idf_tf_doc(idf_tf, docs, doc):
 def buscar_termos(frase,x,y,qtd_docs):
     idf_tf = []
     qtd_termos = 0
-
     
     f = frase.split()
+    
     for p in f:
         k = (pesquisar_idf_tf_termo(y,x,p))
         
@@ -137,6 +146,7 @@ def ranquear(r, qtd, qtd_docs,frase,x,y):
     teste = 0
     vetor_busca = [0.0]*qtd
     docs = []
+    
     
     '''
     #criando matriz para receber valores dos documentos
@@ -158,7 +168,7 @@ def ranquear(r, qtd, qtd_docs,frase,x,y):
         teste += 1
           
     docs = montar_vetores_distancia(x,frase,y,qtd_docs)
-        
+    
     cont2 = 0
     for k in docs:
         cont = 0
