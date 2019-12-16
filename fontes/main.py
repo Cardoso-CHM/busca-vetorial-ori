@@ -426,10 +426,6 @@ def main():
             mensagemSucesso()
             
         elif opcao == 3:
-            print(gerar_indice_invertido("entrada-teste"))
-            mensagemSucesso()
-            
-        elif opcao == 4:
             #zerando arquivo de saida
             zerarArquivo("Lista02")
             #Ordenando as palavras alfabeticamente
@@ -443,13 +439,13 @@ def main():
                     escreverEmArquivo("Lista02.txt",t[0] + ' ' + t[1] + ' ' + t[2] + '\n')
             mensagemSucesso()
             
-        elif opcao == 5:
+        elif opcao == 4:
             #Escrevendo as stopwords e não-stopwords em seus respectivos arquivos
             for p in stops:
                 escreverEmArquivo("stopwords.txt",' \n' + p)
             mensagemSucesso()
         
-        elif opcao == 6:
+        elif opcao == 5:
             frase = input('Digite os termos que deseja pesquisar: ')
             frase = frase.lower()
             termos = frase.split()
