@@ -75,9 +75,9 @@ def gerar_IDF_TF_de_Dicionario_Invertido(dict_indice):
         
         #Na funcao gerarIndiceInvertido é colocado uma chave com o nome "#docs" contendo uma lista
         # com todos os documentos - para facilitar as operações a seguir
-        docs = x["#docs"]
+        docs = dict_indice["#docs"]
         qtde_total_docs = len(docs)
-        del x["#docs"] # retirando indice auxiliar para não causar problemas nas seguintes iteraçÕes:
+        del dict_indice["#docs"] # retirando indice auxiliar para não causar problemas nas seguintes iteraçÕes:
         
         for termo in dict_indice:
             aux = []
@@ -104,19 +104,134 @@ def pesquisar_idf_tf_termo(idf_tf, indice_invertido, termo):
   if(termo in keys):
     return idf_tf[ keys.index(termo) ]
   else:
-    return False;
+    return [];
 
 def pesquisar_idf_tf_doc(idf_tf, docs, doc):
   if(doc in docs):
     return idf_tf[:,docs[doc]]
   else:
-    return False;
+    return [];
 
-def mensagemSucesso():
-    print("\n\n--------------------------------------  Pronto!  --------------------------------------------")
-    print('Processo executado com sucesso!')
-    print("---------------------------------------------------------------------------------------------\n\n")
- 
+def buscar_termos(frase,x,y,qtd_docs):
+    idf_tf = []
+    qtd_termos = 0
+
+    
+    f = frase.split()
+    for p in f:
+        k = (pesquisar_idf_tf_termo(y,x,p))
+        
+        if(len(k) > 0 ):
+            qtd_termos += 1
+            idf_tf.append(k)
+            
+    if(qtd_termos == 0):
+        return ('Nenhum termo encontrado!')
+    else:
+        return ranquear(idf_tf,qtd_termos,qtd_docs,f,x,y)
+
+def ranquear(r, qtd, qtd_docs,frase,x,y):
+    i = 0
+    j = 0
+    div = 0
+    teste = 0
+    vetor_busca = [0.0]*qtd
+    docs = []
+    
+    '''
+    #criando matriz para receber valores dos documentos
+    for k in range(qtd_docs):
+        docs.append(vetor_busca)
+    '''
+        
+    #calculo do valor de divisao do valor de busca
+    for k in r:
+        div += r[i][0]**2
+        i += 1
+    div = div**(0.5)
+    
+    #iteração nas colunas do vetor de busca e atribuindo valor de idf/div
+    for vb in vetor_busca:
+        print(r[j][0],div)
+        vetor_busca[teste] = r[j][0]/div
+        j += 1
+        teste += 1
+          
+    docs = montar_vetores_distancia(x,frase,y,qtd_docs)
+        
+    cont2 = 0
+    for k in docs:
+        cont = 0
+        for t in k:
+            docs[cont2][cont] = t*vetor_busca[cont]
+            cont+=1
+        cont2 +=1
+    
+    ranking = []
+    
+    for k in docs:
+        ranking.append(sum(k))
+    
+    dc =  np.zeros((qtd_docs,2))
+        
+    cont = 0
+    cont2 = 0
+    with np.nditer(dc, op_flags=['readwrite']) as it:
+        for i in it:
+            if(cont%2 ==0):
+                i[...] = ranking[cont2]
+                cont2+=1
+            else:
+                i[...] = cont2
+            cont += 1
+              
+    rk = dc[dc[:,0].argsort()][::-1] 
+    rk1 = rk[:,1]
+    
+    for v in rk1:
+        print('Documento: ', int(v))
+        
+def montar_vetor_busca(dict, lista, lista2):
+    keys=list(dict.keys()) #in python 3, you'll need `list(i.keys())`
+    numerador = []
+    denominador = 0
+    for termo in lista:
+        if(termo in keys):
+            numerador.append(lista2[keys.index(termo), 0])
+            denominador = denominador + math.pow(lista2[keys.index(termo), 0],2)
+    for valor in numerador:
+        denominador=math.sqrt(denominador)
+        numerador[numerador.index(valor)] = float(numerador[numerador.index(valor)])/float(denominador)
+        #numerador.index(valor) = numerador[valor]/denominador
+    return numerador
+
+def montar_vetores_distancia(dict, lista, lista2,qtd_docs):
+    
+    vd = []
+    for coluna, k in enumerate(range(qtd_docs)):
+        keys=list(dict.keys())
+        i=coluna+1
+        numerador = []
+        denominador = 0
+        while i< coluna+2 :
+            for termo in lista:
+                if(termo in keys) :
+                    numerador.append(lista2[keys.index(termo), coluna+1])
+                    denominador = denominador + math.pow(lista2[keys.index(termo), coluna+1],2)
+                    
+            denominador=math.sqrt(denominador)
+            for valor in numerador:
+                if(denominador ==0.0) :
+                    numerador[numerador.index(valor)] = 0;
+                else :
+                    numerador[numerador.index(valor)] = float(numerador[numerador.index(valor)])/float(denominador)
+            
+            i+=1
+        
+        vd.append(numerador)
+    
+    return vd
+
 def retirarStopWords(inn, stopwords):
     # fazendo a interseção das duas listas
     intersecao = np.intersect1d(inn,stopwords)
@@ -154,7 +269,13 @@ def alterarGenero(not_stops, x):
                     
         genero.append(p)
     return genero
+
+def mensagemSucesso():
+    print("\n\n--------------------------------------  Pronto!  --------------------------------------------")
+    print('Processo executado com sucesso!')
+    print("---------------------------------------------------------------------------------------------\n\n")
  
+
 def menu():
     print('||||||||||||||||||||||||||||||||||')
     print('||                              ||')
@@ -163,6 +284,7 @@ def menu():
     print('|| 3-Gerar arquivo de indice    ||')
     print('|| 4-Gerar Lista                ||')
     print('|| 5-Gerar Lista de StopWords   ||')
+    print('|| 6-Realizar Busca Vetorial    ||')
     print('|| 0-Sair                       ||')
     print('||                              ||')
     print('||||||||||||||||||||||||||||||||||')
@@ -171,8 +293,13 @@ def menu():
     op = int(input('|| Opcao:'))
     return op
 
+
+#MAIN - INICIO DA EXECUÇÃO DO PROGRAMA
+    
 opcao = -1
 not_stops = []
+entrada = lerTXT("Lista01") # lendo arquivo de entrada
+stopwords = lerTXT('stopwords') # lendo arquivo contendo stopwords achadas na internet
 
 while opcao != 0:
     #Criando um sistema dinaminco de menu, obrigando o usuário primeiro tirar as stopwords para depois manipular as demais funções
@@ -180,12 +307,10 @@ while opcao != 0:
     
     if opcao == 1:
         # le arquivo txt de entrada em uma matriz "x" sendo a primeira coluna as palavras, a segunda os documentos que ela ocorre e a terceira a frequência da ocorrência
-        x = lerTXT("Lista01")
     
         # cria uma lista contendo a primeira coluna da matriz e retira as palavras repetidas
-        palavras = np.unique(x[:,0])
-        # lendo arquivo contendo stopwords achadas na internet
-        stopwords = lerTXT('stopwords')
+        palavras = np.unique(entrada[:,0])
+
         palavras = retirarStopWords(palavras, stopwords)
         #quantidade de palavras
         tam = len(palavras)
@@ -241,12 +366,15 @@ while opcao != 0:
                 not_stops = not_stops + sub_lista
         flag_Menu = 1        
         mensagemSucesso()
+        
     elif opcao == 2:
-        not_stops =  alterarGenero(not_stops, x)
+        not_stops =  alterarGenero(not_stops, entrada)
         mensagemSucesso()
+        
     elif opcao == 3:
         print(gerar_indice_invertido("entrada-teste"))
         mensagemSucesso()
+        
     elif opcao == 4:
         #zerando arquivo de saida
         zerarArquivo("Lista02")
@@ -254,17 +382,28 @@ while opcao != 0:
         not_stops.sort()
         for p in not_stops:
             #pegando todas as linhas da matriz "x" onde a primeira coluna é igual a "p", ou seja, pegando todas as linhas cuja a palavra é igual a palavra p
-            temp = x[x[:,0] == p]
+            temp = entrada[entrada[:,0] == p]
             for t in temp[:]:
                 #Escrevendo linha por linha cuja primeira coluna é igual a "p"
                 #t[0],t[1] e t[2] são as colunas de cada linha da matriz x, (0 é a palavra, 1 o documento e 2 a frequencia)
                 escreverEmArquivo("Lista02.txt",t[0] + ' ' + t[1] + ' ' + t[2] + '\n')
         mensagemSucesso()
+        
     elif opcao == 5:
         #Escrevendo as stopwords e não-stopwords em seus respectivos arquivos
         for p in stops:
             escreverEmArquivo("stopwords.txt",' \n' + p)
         mensagemSucesso()
+    
+    elif opcao == 6:
+        frase = input('Digite os termos que deseja pesquisar: ')
+        dict_indice_invertido = gerar_indice_invertido("./Lista02.txt")
+        docs = { doc: int(doc.split('doc')[1]) for doc in dict_indice_invertido["#docs"] }
+        qtd_docs = len(docs)
+        
+        matriz_idf_tf = gerar_IDF_TF_de_Dicionario_Invertido(dict_indice_invertido)
+        
+        buscar_termos(frase, dict_indice_invertido,matriz_idf_tf, qtd_docs)
     
     elif opcao != 0:
         print("|| Opção inválida!\n")
