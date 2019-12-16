@@ -151,15 +151,12 @@ def pesquisar_idf_tf_doc(idf_tf, docs, doc):
   else:
     return [];
 
-def buscar_termos(frase,x,y,qtd_docs):
+def busca_vetorial(termos,x,y,qtd_docs):
     idf_tf = []
     qtd_termos = 0
     
-    f = frase.split()
-    
-    for p in f:
-        k = (pesquisar_idf_tf_termo(y,x,p))
-        
+    for t in termos:
+        k = (pesquisar_idf_tf_termo(y,x,t))
         if(len(k) > 0 ):
             qtd_termos += 1
             idf_tf.append(k)
@@ -167,7 +164,7 @@ def buscar_termos(frase,x,y,qtd_docs):
     if(qtd_termos == 0):
         return ('Nenhum termo encontrado!')
     else:
-        return ranquear(idf_tf,qtd_termos,qtd_docs,f,x,y)
+        return ranquear(idf_tf,qtd_termos,qtd_docs,termos,x,y)
 
 def ranquear(r, qtd, qtd_docs,frase,x,y):
     i = 0
@@ -176,6 +173,12 @@ def ranquear(r, qtd, qtd_docs,frase,x,y):
     teste = 0
     vetor_busca = [0.0]*qtd
     docs = []
+    
+    '''
+    #criando matriz para receber valores dos documentos
+    for k in range(qtd_docs):
+        docs.append(vetor_busca)
+    '''
         
     #calculo do valor de divisao do valor de busca
     for k in r:
@@ -190,7 +193,7 @@ def ranquear(r, qtd, qtd_docs,frase,x,y):
         teste += 1
           
     docs = montar_vetores_distancia(x,frase,y,qtd_docs)
-    
+        
     cont2 = 0
     for k in docs:
         cont = 0
@@ -218,6 +221,8 @@ def ranquear(r, qtd, qtd_docs,frase,x,y):
             cont += 1
               
     rk = dc[dc[:,0].argsort()][::-1]
+    
+    rk = rk[rk[:,0] > 0]
     rk1 = rk[:,1]
     
     return rk1
@@ -293,6 +298,36 @@ def gerar_dict_documentos_pdf(dir_docs_pdfs):
             docs[filename] = palavras
     return docs
 
+def buscar_trecho_de_termo_no_doc(doc_conteudo,termo):
+    palavras = doc_conteudo.split()
+    res = []
+            
+    idxs_termo = [i for i, x in enumerate(palavras) if x == termo or termo in x]
+    
+    for idx in idxs_termo:
+        deslocamento = [idx,idx]
+        
+        #verificando se pode pegar 5 palavras antes da posição do indice do termo
+        for i in range(5):
+            if(idx - i >=0):
+                deslocamento[0] = idx-i
+                break
+            
+        #verificando se pode pegar 5 palavras depois da posição do indice do termo
+        for i in reversed(range(5)):
+            if(idx + i <= len(palavras)):
+                deslocamento[1] = idx+i
+                break;
+            
+        aux = "("
+        for i in range(deslocamento[0], deslocamento[1]):
+            aux += palavras[i] + " "
+        aux +=")"
+        res.append(aux)
+    
+    return res
+    
+    
 def mensagemSucesso():
     print("\n\n--------------------------------------  Pronto!  --------------------------------------------")
     print('Processo executado com sucesso!')
@@ -416,13 +451,23 @@ def main():
         
         elif opcao == 6:
             frase = input('Digite os termos que deseja pesquisar: ')
+            frase = frase.lower()
+            termos = frase.split()
+            
             dict_indice_invertido = gerar_indice_invertido("./Lista02.txt")
             docs = gerar_dict_documentos_pdf("../docs/*.pdf") #gerando dict de docs
             qtd_docs = len(docs)
             
             matriz_idf_tf = gerar_IDF_TF_de_Dicionario_Invertido(dict_indice_invertido, docs)
             
-            ranking = buscar_termos(frase, dict_indice_invertido,matriz_idf_tf, qtd_docs)
+            ranking = busca_vetorial(termos, dict_indice_invertido,matriz_idf_tf, qtd_docs)
+            
+            for i in ranking:
+                doc = "doc" + str(int(i))
+                for t in termos:
+                    preview_list = buscar_trecho_de_termo_no_doc(docs[doc][0],t)
+                    if(preview_list):
+                        print('"' , doc , '": ', preview_list)
             
         elif opcao != 0:
             print("|| Opção inválida!\n")
