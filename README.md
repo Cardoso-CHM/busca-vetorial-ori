@@ -1,4 +1,4 @@
-# ufu-ori-2019
+# busca-vetorial-ori
 Algoritmo de ORI escrito em Python 3 que realiza a busca vetorial de termos stemizados obtidos em arquivos pdf
 
 ### Funcionalidades
